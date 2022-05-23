@@ -26,12 +26,19 @@ var controller = (function(budgetCtrl, uiCtrl){
       uiCtrl.renderListItem(newItem, input.type);
       uiCtrl.clearFields();
       generateTestData.init();
+
+
+      // посчитать бюджет
+      updateBudget();
+
       }
-
-
-
-
    }
+
+   function updateBudget (){
+      budgetCtrl.calculateBudget();
+   }
+
+
 
    return{
       init: function(){

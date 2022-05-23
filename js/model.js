@@ -25,9 +25,9 @@ var modelController = (function(){
       }
       // В зависимости от типа записи используем соответствующий конструктор и создаем объект
       if( type === "inc"){
-        newItem = new Income(ID, desc, val);
+        newItem = new Income(ID, desc, parseFloat(val));
       }else if (type === "exp"){
-         newItem = new Expense(ID, desc, val)
+         newItem = new Expense(ID, desc, parseFloat(val))
       };
 
       data.allItems[type].push(newItem);
@@ -35,6 +35,35 @@ var modelController = (function(){
       return newItem;
    }
 
+
+   function calculateTotalSum(type){
+      var sum = 0;
+
+      data.allItems[type].forEach(function(item){
+         sum = sum + item.value;
+      });
+      return sum;
+   }
+
+   function calculateBudget(){
+
+      data.totals.inc = calculateTotalSum("inc");
+      console.log("calculateBudget ~  data.totals.inc",  data.totals.inc);
+      
+      data.totals.exp =  calculateTotalSum("exp");
+      console.log("calculateBudget ~ data.totals.exp", data.totals.exp);
+
+      // общий бюджет
+      data.budget = data.totals.inc - data.totals.exp;
+      console.log("calculateBudget ~  data.budget",  data.budget)
+
+      // % для расходов
+      if ((data.totals.inc) > 0){
+         data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+      }else{
+         data.percentage = -1;
+      }
+   }
 
 
 
@@ -47,11 +76,14 @@ var modelController = (function(){
       totals: {
          inc: 0,
          exp: 0
-      }
+      },
+      budget: 0,
+      percentage: -1
    };
 
    return {
       addItem: addItem,
+      calculateBudget: calculateBudget,
       test: function(){
          console.log(data);
       }
