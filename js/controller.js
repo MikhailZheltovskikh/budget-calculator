@@ -13,7 +13,6 @@ var controller = (function(budgetCtrl, uiCtrl){
 
       // получить данные из формы
       var input = uiCtrl.getInput();
-      console.log(input);
 
 
       if(input.description !== "" && input.value > 0 && !isNaN(input.value)){
@@ -35,7 +34,13 @@ var controller = (function(budgetCtrl, uiCtrl){
    }
 
    function updateBudget (){
+      // расчет бюджета в модели
       budgetCtrl.calculateBudget();
+      //  получить расчитанный бюджет из модели
+      budgetObj = budgetCtrl.getBudget();
+      // отобразить бюджет в шаблоне;
+      uiCtrl.updateBudget(budgetObj);
+
    }
 
 
@@ -44,6 +49,12 @@ var controller = (function(budgetCtrl, uiCtrl){
       init: function(){
          console.log("App started!")
          setupEventListerners();
+         uiCtrl.updateBudget({
+            budget: 0,
+            totalInc: 0,
+            totalExp: 0,
+            percentage: 0
+         });
       }
    }
 

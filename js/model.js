@@ -48,14 +48,11 @@ var modelController = (function(){
    function calculateBudget(){
 
       data.totals.inc = calculateTotalSum("inc");
-      console.log("calculateBudget ~  data.totals.inc",  data.totals.inc);
       
       data.totals.exp =  calculateTotalSum("exp");
-      console.log("calculateBudget ~ data.totals.exp", data.totals.exp);
 
       // общий бюджет
       data.budget = data.totals.inc - data.totals.exp;
-      console.log("calculateBudget ~  data.budget",  data.budget)
 
       // % для расходов
       if ((data.totals.inc) > 0){
@@ -65,8 +62,14 @@ var modelController = (function(){
       }
    }
 
-
-
+   function getBudget(){
+      return{
+         budget: data.budget,
+         totalInc: data.totals.inc,
+         totalExp: data.totals.exp,
+         percentage: data.percentage
+      }
+   }
 
    var data = {
       allItems: {
@@ -84,6 +87,7 @@ var modelController = (function(){
    return {
       addItem: addItem,
       calculateBudget: calculateBudget,
+      getBudget: getBudget,
       test: function(){
          console.log(data);
       }

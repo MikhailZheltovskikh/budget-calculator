@@ -6,7 +6,11 @@ var viewController = (function (){
       inputDescription: "#input__description",
       inputValue: "#input__value",
       incomeContainer: "#income__list",
-      expenseContainer: "#expenses__list"
+      expenseContainer: "#expenses__list",
+      budgetLabel: "#budget-value",
+      incomeLabel: "#income-label",
+      expenesesLabel: "#expeneses-label",
+      expenesesPercentLabel: "#expeneses-percent-label",
    };
 
    function getInput (){
@@ -62,6 +66,18 @@ var viewController = (function (){
       document.querySelector(containerElement).insertAdjacentHTML("beforeend", newHtml);
    }
 
+   function updateBudget(obj){
+      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
+      document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
+      document.querySelector(DOMstrings.expenesesLabel).textContent = obj.totalExp;
+
+      if(obj.percentage > 0){
+         document.querySelector(DOMstrings.expenesesPercentLabel).textContent = obj.percentage;
+      }else{
+         document.querySelector(DOMstrings.expenesesPercentLabel).textContent = "--";
+      }
+   }
+
    // отчистка полей
    function clearFields(){
       var inputDesc, inputVal;
@@ -78,6 +94,7 @@ var viewController = (function (){
       getInput: getInput,
       renderListItem: renderListItem,
       clearFields: clearFields,
+      updateBudget: updateBudget,
       getDomStrings: function () {
          return DOMstrings;
       },
