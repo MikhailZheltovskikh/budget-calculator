@@ -24,16 +24,16 @@
             <div class="header__info info-box info-box--income">
                 <div class="info-box__title">Доходы</div>
                 <div class="info-box__right">
-                    <div class="info-box__value">+ 14,300.00</div>
+                    <div id="income-label" class="info-box__value">+ 14,300.00</div>
                     <div class="info-box__percents"></div>
                 </div>
             </div>
             <div class="header__info info-box info-box--expenses">
-                <div class="info-box__title">расходы</div>
+                <div  class="info-box__title">расходы</div>
                 <div class="info-box__right">
-                    <div class="info-box__value">- 1,954.00</div>
+                    <div id="expeneses-label" class="info-box__value">- 1,954.00</div>
                     <div class="info-box__percents">
-                        <div class="badge">
+                        <div id="expeneses-percent-label" class="badge">
                             1145%
                         </div>
                     </div>
@@ -78,10 +78,10 @@
         <!-- // Input form -->
 
         <!-- Budget table -->
-        <section class="budget-section">
+        <section class="budget-section" id="budget-tabel">
             <div class="budget__col">
                 <h2 class="title title--income">Доходы</h2>
-                <ul id="income__list" class="budget-list">
+                <ul id="income__list" class="budget-list" >
                     <!-- <li id="income-id" class="budget-list__item item item--income">
                         <div class="item__title">Зарплата</div>
                         <div class="item__right">

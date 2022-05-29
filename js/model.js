@@ -35,6 +35,19 @@ var modelController = (function(){
       return newItem;
    }
 
+   function deleteItem(type, id){
+      // находим запись по id
+      var ids = data.allItems[type].map(function(item){
+         return item.id;
+      });
+      // находим index записи
+      index = ids.indexOf(id);
+      // удаление
+      if(index !== -1){
+         data.allItems[type].splice(index, 1);
+      };
+      console.log("deleteItem -> data.allItems", data.allItems)
+   }
 
    function calculateTotalSum(type){
       var sum = 0;
@@ -88,6 +101,7 @@ var modelController = (function(){
       addItem: addItem,
       calculateBudget: calculateBudget,
       getBudget: getBudget,
+      deleteItem: deleteItem,
       test: function(){
          console.log(data);
       }

@@ -11,6 +11,7 @@ var viewController = (function (){
       incomeLabel: "#income-label",
       expenesesLabel: "#expeneses-label",
       expenesesPercentLabel: "#expeneses-percent-label",
+      budgetTabel: "#budget-tabel",
    };
 
    function getInput (){
@@ -27,7 +28,7 @@ var viewController = (function (){
 
       if(type === "inc"){
          containerElement = DOMstrings.incomeContainer;
-         html = `<li id="income-%id%" class="budget-list__item item item--income">
+         html = `<li id="inc-%id%" class="budget-list__item item item--income">
                      <div class="item__title">%description%</div>
                      <div class="item__right">
                         <div class="item__amount">%value%</div>
@@ -41,7 +42,7 @@ var viewController = (function (){
                </li>`
       }else{
          containerElement = DOMstrings.expenseContainer;
-         html = `<li id="expense-%id%" class="budget-list__item item item--expense">
+         html = `<li id="exp-%id%" class="budget-list__item item item--expense">
                      <div class="item__title">%description%</div>
                      <div class="item__right">
                         <div class="item__amount">
@@ -78,6 +79,10 @@ var viewController = (function (){
       }
    }
 
+   function deleteListItem(itemId){
+      document.getElementById(itemId).remove();
+   }
+
    // отчистка полей
    function clearFields(){
       var inputDesc, inputVal;
@@ -95,6 +100,7 @@ var viewController = (function (){
       renderListItem: renderListItem,
       clearFields: clearFields,
       updateBudget: updateBudget,
+      deleteListItem: deleteListItem,
       getDomStrings: function () {
          return DOMstrings;
       },
