@@ -1,34 +1,80 @@
-var viewController = (function (){
+var viewController = (function () {
+  var DOMstrings = {
+    form: "#budget-form",
+    inputType: "#input__type",
+    inputDescription: "#input__description",
+    inputValue: "#input__value",
+    incomeContainer: "#income__list",
+    expenseContainer: "#expenses__list",
+    budgetLabel: "#budget-value",
+    incomeLabel: "#income-label",
+    expenesesLabel: "#expeneses-label",
+    expenesesPercentLabel: "#expeneses-percent-label",
+    budgetTabel: "#budget-tabel",
+    mothLabel: "#month",
+    yearLabel: "#year"
+  };
 
-   var DOMstrings = {
-      form: "#budget-form",
-      inputType: "#input__type", 
-      inputDescription: "#input__description",
-      inputValue: "#input__value",
-      incomeContainer: "#income__list",
-      expenseContainer: "#expenses__list",
-      budgetLabel: "#budget-value",
-      incomeLabel: "#income-label",
-      expenesesLabel: "#expeneses-label",
-      expenesesPercentLabel: "#expeneses-percent-label",
-      budgetTabel: "#budget-tabel",
-   };
+  function getInput() {
+    return {
+      type: document.querySelector(DOMstrings.inputType).value,
+      description: document.querySelector(DOMstrings.inputDescription).value,
+      value: document.querySelector(DOMstrings.inputValue).value,
+    };
+  }
 
-   function getInput (){
-      return {
-         type: document.querySelector(DOMstrings.inputType).value,
-         description: document.querySelector(DOMstrings.inputDescription).value,
-         value: document.querySelector(DOMstrings.inputValue).value,
-      };
-   }
+  function formatNumber(num, type) {
+    var numSplit, int, dec, newInt, resultNumber;
+    // убираем знак минус у отрицательных чисел
+    num = Math.abs(num);
 
-   function renderListItem(obj, type){
+    //приводим к 2 цифрам после точки
+    num = num.toFixed(2);
 
-      var containerElement, html;
+    numSplit = num.split("."); //  45.78 => [45, 78]
+    // целая часть
+    int = numSplit[0];
+    // дробная часть
+    dec = numSplit[1];
 
-      if(type === "inc"){
-         containerElement = DOMstrings.incomeContainer;
-         html = `<li id="inc-%id%" class="budget-list__item item item--income">
+    // расставляем запятые
+    if (int.length > 3) {
+      newInt = "";
+
+      for (var i = 0; i < int.length / 3; i++) {
+        // формируем новую строку с номером -добавляем запятую каждые 3 числа-вырезанныый кусок из исходной строки
+        //  - конец строки, правая часть
+        newInt = "," + int.substring(int.length - 3 * (i + 1), int.length - 3 * i) + newInt;
+      }
+
+      // убираем запятую в начале, если она есть
+      if (newInt[0] === ",") {
+        newInt = newInt.substring(1);
+      }
+      // если исходное число равно нулю, то в новую строку записываем ноль
+    } else if (int === "0") {
+      newInt = "0";
+      // если исходное целое число имеет 3 или менее символов
+    } else {
+      newInt = int;
+    }
+
+    resultNumber = newInt + "." + dec;
+
+    if (type === "exp") {
+      resultNumber = "- " + resultNumber;
+    } else if (type === "inc") {
+      resultNumber = "+ " + resultNumber;
+    }
+    return resultNumber;
+  }
+
+  function renderListItem(obj, type) {
+    var containerElement, html;
+
+    if (type === "inc") {
+      containerElement = DOMstrings.incomeContainer;
+      html = `<li id="inc-%id%" class="budget-list__item item item--income">
                      <div class="item__title">%description%</div>
                      <div class="item__right">
                         <div class="item__amount">%value%</div>
@@ -39,16 +85,16 @@ var viewController = (function (){
                            />
                         </button>
                      </div>
-               </li>`
-      }else{
-         containerElement = DOMstrings.expenseContainer;
-         html = `<li id="exp-%id%" class="budget-list__item item item--expense">
+               </li>`;
+    } else {
+      containerElement = DOMstrings.expenseContainer;
+      html = `<li id="exp-%id%" class="budget-list__item item item--expense">
                      <div class="item__title">%description%</div>
                      <div class="item__right">
                         <div class="item__amount">
                            %value%
                            <div class="item__badge">
-                                 <div class="badge badge--dark">
+                                 <div class="item__precent badge badge--dark">
                                     15%
                                  </div>
                            </div>
@@ -57,57 +103,91 @@ var viewController = (function (){
                            <img src="./img/circle-red.svg" alt="delete" />
                         </button>
                      </div>
-               </li>`
-      };
+               </li>`;
+    }
 
-      newHtml = html.replace("%id%", obj.id);
-      newHtml = newHtml.replace("%description%", obj.description);
-      newHtml = newHtml.replace("%value%", obj.value);
+    newHtml = html.replace("%id%", obj.id);
+    newHtml = newHtml.replace("%description%", obj.description);
+    newHtml = newHtml.replace("%value%", formatNumber(obj.value, type));
 
-      document.querySelector(containerElement).insertAdjacentHTML("beforeend", newHtml);
+    document.querySelector(containerElement).insertAdjacentHTML("beforeend", newHtml);
+  }
+
+  function updateBudget(obj) {
+   var type;
+
+   if(obj.budget > 0){
+      type = "inc";
+   }else{
+      type = "exp";
    }
 
-   function updateBudget(obj){
-      document.querySelector(DOMstrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(DOMstrings.incomeLabel).textContent = obj.totalInc;
-      document.querySelector(DOMstrings.expenesesLabel).textContent = obj.totalExp;
+    document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget, type);
+    document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalInc, "inc");
+    document.querySelector(DOMstrings.expenesesLabel).textContent = formatNumber(obj.totalExp, "exp");
 
-      if(obj.percentage > 0){
-         document.querySelector(DOMstrings.expenesesPercentLabel).textContent = obj.percentage;
-      }else{
-         document.querySelector(DOMstrings.expenesesPercentLabel).textContent = "--";
+    if (obj.percentage > 0) {
+      document.querySelector(DOMstrings.expenesesPercentLabel).textContent = obj.percentage;
+    } else {
+      document.querySelector(DOMstrings.expenesesPercentLabel).textContent = "--";
+    }
+  }
+
+  function deleteListItem(itemId) {
+    document.getElementById(itemId).remove();
+  }
+
+  function updateItemsPercentages(items) {
+    items.forEach(function (item) {
+      // находим блок с % внутри текущей записи
+      var el = document.getElementById(`exp-${item[0]}`).querySelector(".item__precent");
+
+      // проверка, если значение % = "-1" когда нет доходов
+      if (item[1] >= 0) {
+        el.parentElement.style.display = "block";
+        el.textContent = item[1] + "%";
+      } else {
+        el.parentElement.style.display = "none";
       }
-   }
+    });
+  }
 
-   function deleteListItem(itemId){
-      document.getElementById(itemId).remove();
-   }
+  function displayMonth(){
+   var now, year, monthArr;
+   now = new Date();
+   year = now.getFullYear();
+   month = now.getMonth();
 
-   // отчистка полей
-   function clearFields(){
-      var inputDesc, inputVal;
+   monthArr = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
-      inputDesc = document.querySelector(DOMstrings.inputDescription);
-      inputVal = document.querySelector(DOMstrings.inputValue);
+   month = monthArr[month];
 
-      inputDesc.value = "";
-      inputDesc.focus();
-      inputVal.value = "";
-   }
+   document.querySelector(DOMstrings.mothLabel).innerText = month;
+   document.querySelector(DOMstrings.yearLabel).innerText = year;
+  }
 
-   return {
-      getInput: getInput,
-      renderListItem: renderListItem,
-      clearFields: clearFields,
-      updateBudget: updateBudget,
-      deleteListItem: deleteListItem,
-      getDomStrings: function () {
-         return DOMstrings;
-      },
-   };
+  // отчистка полей
+  function clearFields() {
+    var inputDesc, inputVal;
 
+    inputDesc = document.querySelector(DOMstrings.inputDescription);
+    inputVal = document.querySelector(DOMstrings.inputValue);
+
+    inputDesc.value = "";
+    inputDesc.focus();
+    inputVal.value = "";
+  }
+
+  return {
+    getInput: getInput,
+    renderListItem: renderListItem,
+    clearFields: clearFields,
+    updateBudget: updateBudget,
+    deleteListItem: deleteListItem,
+    displayMonth: displayMonth,
+    updateItemsPercentages: updateItemsPercentages,
+    getDomStrings: function () {
+      return DOMstrings;
+    },
+  };
 })();
-
-
-
- 

@@ -9,8 +9,35 @@ var modelController = (function(){
    var Expense = function (id, description, value){
       this.id = id,
       this.description = description,
-      this.value = value
+      this.value = value,
+      this.percentage = -1
    };
+
+   Expense.prototype.calcPrecentage = function(totalIncome){
+      if(totalIncome > 0){
+         this.percentage = Math.round((this.value / totalIncome) * 100)
+      }else{
+         this.percentage = -1
+      }
+   }
+
+   // получим значения
+   Expense.prototype.getPercentage = function(){
+      return this.percentage;
+   }
+
+   function calculatePercentage(){
+      data.allItems.exp.forEach(function(item){
+         item.calcPrecentage(data.totals.inc);
+      });
+   }
+
+   function getAllIdsAndPercentages(){
+      var allPerc = data.allItems.exp.map(function(item){
+         return [item.id , item.getPercentage()];
+      })
+      return allPerc;
+   }
 
    function addItem(type, desc, val){
 
@@ -46,7 +73,6 @@ var modelController = (function(){
       if(index !== -1){
          data.allItems[type].splice(index, 1);
       };
-      console.log("deleteItem -> data.allItems", data.allItems)
    }
 
    function calculateTotalSum(type){
@@ -102,8 +128,10 @@ var modelController = (function(){
       calculateBudget: calculateBudget,
       getBudget: getBudget,
       deleteItem: deleteItem,
+      calculatePercentage: calculatePercentage,
+      getAllIdsAndPercentages: getAllIdsAndPercentages,
       test: function(){
-         console.log(data);
+         // console.log(data);
       }
    }
    

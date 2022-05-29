@@ -6,6 +6,16 @@ var controller = (function (budgetCtrl, uiCtrl) {
     document.querySelector(DOM.budgetTabel).addEventListener("click", ctrlDeleteItem);
   };
 
+  function updatePercentages(){
+   // посчитать % для каждой записи типа expense  
+   budgetCtrl.calculatePercentage();
+   budgetCtrl.test();
+   // получим данные по % с модели
+   var idsAndPercents = budgetCtrl.getAllIdsAndPercentages();
+   // обновить ui с новыми %
+   uiCtrl.updateItemsPercentages(idsAndPercents);
+  }
+
   // ф-я срабатывающая при отправке формы
   function ctrlAddItem(e) {
     e.preventDefault();
@@ -25,6 +35,9 @@ var controller = (function (budgetCtrl, uiCtrl) {
 
       // посчитать бюджет
       updateBudget();
+
+      // обновить %
+      updatePercentages()
     }
   }
 
@@ -42,7 +55,10 @@ var controller = (function (budgetCtrl, uiCtrl) {
       uiCtrl.deleteListItem(itemId);
 
       // посчитать бюджет
-      updateBudget();
+      updateBudget();   
+
+      // обновить %
+      updatePercentages()
     }
   }
 
@@ -59,6 +75,7 @@ var controller = (function (budgetCtrl, uiCtrl) {
     init: function () {
       console.log("App started!");
       setupEventListerners();
+      uiCtrl.displayMonth(),
       uiCtrl.updateBudget({
         budget: 0,
         totalInc: 0,
